@@ -1,0 +1,99 @@
+### Task 1
+
+M=MatrixSpace(GF(2),4,8)
+G=M([1,0,0,1,1,0,0,1,  
+     0,1,0,0,1,0,1,1,  
+     1,0,1,0,1,0,1,0,  
+     1,0,1,1,0,1,0,0])
+print(G)
+print("-------")
+G_=G.echelon_form()
+print(G_)
+print("-------")
+M2=MatrixSpace(GF(2), 1,4)
+m=M2([1,1,1,0])
+print(m*G_)
+print("-------")
+M3=MatrixSpace(GF(2),8,4)
+H=M3([0,1,1,1, 1,0,1,1, 1,1,0,1, 1,1,1,0, 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1])
+
+print(H)
+print("-------")
+M4=MatrixSpace(GF(2),1,8)
+y=M4([1,1,0,1,0,1,0,1])
+print(y)
+print("-------")
+print(y*H)
+print("-------")
+for i in range(8):
+    e=[0]*8
+    e[i]=1
+    e=M4(e)
+    if e*H==y*H:
+        error=e
+print(error)
+print("-------")
+z=y-error
+print(z)
+print("-------")
+m2=G_.solve_left(z)
+print(m2)
+
+
+
+### task 2
+
+F=GF(2)
+E=GF(2**4, 'a')
+R.<X>=PolynomialRing(E, 'X')
+alpha=E.gen()
+
+def bm(s):
+    X = R.0
+    C = R.one()
+    B = R.one()
+    L = 0
+    deltap = 1
+    m = -1
+    for j in range(len(s)):
+        delta = sum([ s[j-i]*C[i] for i in range(C.degree()+1)])
+        if delta != 0:
+            T = C
+            C = C - delta/deltap*X^(j-m)*B
+            if 2*L <= j:
+                B = T
+                m = j
+                deltap = delta
+                L = j + 1 - L
+        print(j+1,"|",L,"|",C,"|",B,"|",delta)
+    return (L,C)
+
+g=sum([X**i for i in {8,7,6,4,0}])
+
+print(g)
+
+y=sum([X**i for i in {12,11,9,8,7,3,0}])
+
+print(y)
+
+s=[y(alpha**i) for i in {1,2,3,4}]
+
+print(s)
+
+L,C=bm(s)
+
+error_locations=[(15-i)%15 for i in range(15) if C(alpha**i)==0]
+
+print(error_locations)
+
+e=sum(X**i for i in error_locations)
+
+print(e)
+
+c=y-e
+
+print(c)
+
+m=c/g
+
+print(m*g)
